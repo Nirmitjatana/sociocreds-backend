@@ -1,0 +1,58 @@
+{
+  "name": "sociocredz-backend",
+  "description": "<p align=\"center\">\r \t<img src=\"https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png\" />\r \t<h2 align=\"center\">Node.JS template</h2>\r \t<h4 align=\"center\">A template to quickstart Node.JS REST APIs<h4>\r </p>",
+  "version": "1.0.0",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeamRekursion/sociocredz-backend.git"
+  },
+  "author": "Team Rekursion",
+  "bugs": {
+    "url": "https://github.com/TeamRekursion/sociocredz-backend/issues"
+  },
+  "homepage": "https://github.com/TeamRekursion/sociocredz-backend#readme",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "test": "semistandard && nyc --reporter=lcov mocha tests/*",
+    "lint": "standard --fix",
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "coverage": "codecov"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.5.1",
+    "uuid4": "^2.0.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "codecov": "^3.7.1",
+    "husky": "^4.3.8",
+    "mocha": "^7.1.2",
+    "nodemon": "^2.0.7",
+    "nyc": "^15.0.0",
+    "standard": "^16.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && git add .",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}
