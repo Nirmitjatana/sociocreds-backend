@@ -55,31 +55,6 @@ class ShopController {
     }
   }
 
-  static async sendPoints (shopId, userId, amount) {
-    try {
-      const points = {
-        pointsId: uuid4(),
-        shopId,
-        userId,
-        amount
-      }
-      const createdPoint = await Point.create(points)
-      await User.increment('credits', { by: amount, where: { userId } })
-      return {
-        error: false,
-        code: 200,
-        message: 'Points Credited',
-        data: createdPoint
-      }
-    } catch (err) {
-      logger.error(err.toString())
-      return {
-        error: true,
-        code: 500,
-        message: err.toString()
-      }
-    }
-  }
 }
 
 module.exports = ShopController
