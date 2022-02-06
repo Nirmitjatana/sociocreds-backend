@@ -82,7 +82,93 @@ class UserController {
     }
   }
 
-  
+  static async getTransactions (userId) {
+    try {
+      const donations = await Donation.findAll({
+        where: { userId: userId },
+        include: [{ model: Ngo, attributes: ['ngoName'] }],
+        order: [['createdAt', 'DESC']]
+      })
+      const points = await Points.findAll({
+        where: { userId: userId },
+        include: [{ model: Shop, attributes: ['shopName', 'shopAddress'] }],
+        order: [['createdAt', 'DESC']]
+      })
+
+      return {
+        code: 200,
+        error: false,
+        donations,
+        points
+      }
+    } catch (err) {
+      logger.error(err.toString())
+      return {
+        error: true,
+        code: 500,
+        message: err.toString()
+      }
+    }
+  }
+
+  static async GetRecent (userId) {
+    try {
+      const donations = await Donation.findAll({
+        where: { userId: userId },
+        include: [{ model: Ngo, attributes: ['ngoName'] }],
+        limit: 5,
+        order: [['createdAt', 'DESC']]
+      })
+      const points = await Points.findAll({
+        where: { userId: userId },
+        include: [{ model: Shop, attributes: ['shopName', 'shopAddress'] }],
+        limit: 5,
+        order: [['createdAt', 'DESC']]
+      })
+
+      const d = donations.map(e => {
+        return {
+          name: e.Ngo.ngoName,
+          desc: e.description,
+          amount: e.amount,
+          positive: false,
+          ts: new Date(e.createdAt)
+        }
+      })
+
+      const p = points.map(e => {
+        return {
+          name: e.Shop.shopName,
+          desc: e.Shop.shopAddress,
+          amount: e.amount,
+          positive: true,
+          ts: new Date(e.createdAt)
+        }
+      })
+      const final = [
+        ...p,
+        ...d
+      ]
+
+      final.sort((a, b) => {
+        if (a > b) { return -1 } else { return 1 }
+      })
+
+      return {
+        code: 200,
+        error: false,
+        message: 'fetched recent transactions',
+        data: final
+      }
+    } catch (err) {
+      logger.error(err.toString())
+      return {
+        error: true,
+        code: 500,
+        message: err.toString()
+      }
+    }
+  }
 
   static async GetCampaigns () {
     try {
@@ -147,7 +233,39 @@ class UserController {
     }
   }
 
-  
+  static async LeaderBoard () {
+    try {
+      const mostDonations = await Donation.findAll({
+        where: { userId: { [Op.ne]: null } },
+        attributes: ['User.userId', [Sequelize.fn('SUM', Sequelize.col('amount')), 'amount']],
+        group: ['User.userId'],
+        include: [{ model: User, attributes: ['userName'] }],
+        order: [[Sequelize.fn('SUM', Sequelize.col('Donation.amount')), 'DESC']],
+        limit: 5
+      })
+      const recentDonations = await Donation.findAll({
+        where: { userId: { [Op.ne]: null } },
+        attributes: ['User.userId', 'amount', 'createdAt'],
+        include: [{ model: User, attributes: ['userName'] }],
+        order: [['createdAt', 'DESC']],
+        limit: 5
+      })
+      return {
+        code: 200,
+        message: 'fetched donations',
+        error: false,
+        recentDonations,
+        mostDonations
+      }
+    } catch (err) {
+      console.log(err)
+      return {
+        error: true,
+        code: 500,
+        message: err.toString()
+      }
+    }
+  }
 }
 
 module.exports = UserController
