@@ -23,4 +23,34 @@ router.post('/post/create', middlewares.isLoggedIn, async (req, res) => {
   res.status(response.code).send(response)
 })
 
+router.post('/campaign/create', middlewares.isLoggedIn, async (req, res) => {
+  const { tagline, campaignDescription, moneyRequired, title } = req.body
+  const response = await NgoController.createCampaign(req.decoded.id, tagline, campaignDescription, moneyRequired, title)
+  res.status(response.code).send(response)
+})
+
+router.get('/posts/fetch', middlewares.isLoggedIn, async (req, res) => {
+  const response = await NgoController.fetchPost(req.decoded.id)
+  res.status(response.code).send(response)
+})
+
+router.get('/campaigns/fetch', middlewares.isLoggedIn, async (req, res) => {
+  const response = await NgoController.fetchCampaigns(req.decoded.id)
+  res.status(response.code).send(response)
+})
+
+router.post('/proof/upload', middlewares.isLoggedIn, async (req, res) => {
+  const response = await NgoController.proofUpload(req.body.proofVideoUrl, req.body.donations)
+  res.status(response.code).send(response)
+})
+
+router.get('/donations/total', middlewares.isLoggedIn, async (req, res) => {
+  const response = await NgoController.totalDonationsOfNGO(req.decoded.id)
+  res.status(response.code).send(response)
+})
+router.get('/donations', middlewares.isLoggedIn, async (req, res) => {
+  const response = await NgoController.donationsOfNGO(req.decoded.id)
+  res.status(response.code).send(response)
+})
+
 module.exports = router
